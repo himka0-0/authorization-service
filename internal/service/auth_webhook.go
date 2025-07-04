@@ -9,8 +9,9 @@ import (
 	"os"
 )
 
-func (s *AuthService) sendWebhook(newIP string) {
+func (s *AuthService) sendWebhook(newIP, guid string) {
 	payload := model.Webhook{
+		GuID:    guid,
 		Message: "Попытка входа с нового ip",
 		NewIP:   newIP,
 	}

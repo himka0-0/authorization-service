@@ -3,6 +3,7 @@ package main
 import (
 	"MEDODS/internal/api"
 	"MEDODS/internal/db"
+	"MEDODS/internal/middleware"
 	"MEDODS/internal/repository"
 	"MEDODS/internal/service"
 	"MEDODS/internal/tokens"
@@ -29,6 +30,8 @@ func main() {
 
 	r.GET("/login/user/:guid", api.NewLoginHandler(authService).Login)
 	r.POST("/refresh", api.NewRefreshHandler(authService).Refresh)
+	r.GET("/myguid", middleware.AuthMiddleware(authService), api.MyGuid)
+	r.POST("/logout", middleware.AuthMiddleware(authService), api.NewLogoutHandler(authService).Logout)
 
 	port := os.Getenv("PORT")
 	if port == "" {

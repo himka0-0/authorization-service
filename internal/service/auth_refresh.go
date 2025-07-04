@@ -78,7 +78,7 @@ func (s *AuthService) validateRefreshToken(token *model.RefreshToken, refreshTok
 	}
 
 	if token.IP != ip {
-		go s.sendWebhook(token.IP)
+		go s.sendWebhook(token.IP, token.UserGUID)
 	}
 
 	if token.Used {
