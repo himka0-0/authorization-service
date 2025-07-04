@@ -28,6 +28,7 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/login/user/:guid", api.NewLoginHandler(authService).Login)
+	r.POST("/refresh", api.NewRefreshHandler(authService).Refresh)
 
 	port := os.Getenv("PORT")
 	if port == "" {
