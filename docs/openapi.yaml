@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: Auth Service API
+  version: 1.0.0
+  description: >
+    Сервис аутентификации, реализующий получение, обновление и деавторизацию токенов.
+servers:
+  - url: http://localhost:8080
+paths:
+  /login/user/{guid}:
+    get:
+      summary: Получить пару токенов
+      parameters:
+        - name: guid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+              examples:
+                example:
+                  value:
+                    access_token: "eyJ..."
+                    refresh_token: "abcd..."
+        '400':
+          description: Ошибка запроса
+  /refresh:
+    post:
+      summary: Обновить пару токенов
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Новая пара токенов
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+        '400':
+          description: Ошибка запроса
+        '401':
+          description: Ошибка авторизации
+  /myguid:
+    get:
+      summary: Получить GUID текущего пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  guid:
+                    type: string
+        '401':
+          description: Ошибка авторизации
+  /logout:
+    post:
+      summary: Деавторизация пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Успешная деавторизация
+        '401':
+          description: Ошибка авторизации
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
