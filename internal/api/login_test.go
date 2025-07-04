@@ -2,11 +2,13 @@ package api_test
 
 import (
 	"MEDODS/internal/api"
+	"MEDODS/internal/model"
 	"MEDODS/internal/repository"
 	"MEDODS/internal/service"
 	"MEDODS/internal/tokens"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/http"
@@ -17,10 +19,10 @@ import (
 
 func TestLoginHandler_Login(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
-	err = db.AutoMigrate(&repository.RefreshTokenRepo{})
-	assert.NoError(t, err)
+	err = db.AutoMigrate(&model.RefreshToken{})
+	require.NoError(t, err)
 
 	jwtManager := tokens.NewJwt("test_secret", time.Hour)
 	repo := repository.NewRefreshTokenRepo(db)

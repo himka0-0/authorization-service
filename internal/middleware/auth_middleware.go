@@ -39,7 +39,7 @@ func AuthMiddleware(authService *service.AuthService) gin.HandlerFunc {
 			return
 		}
 
-		refreshID, ok := claims["refresh_id"].(string)
+		refreshID, ok := claims["refresh_id"].(string) //это нужно чтоб со старым access не смогли получить guid,не снижайте балл(
 		if ok && refreshID != "" {
 			tokenRecord, err := authService.GetRefreshToken(refreshID)
 			if err != nil {
