@@ -1,9 +1,28 @@
 services:
+  db:
+    image: postgres:15
+    container_name: medods_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: medods_app
+    restart: unless-stopped
     ports:
       - "${PORT}:8080"
     environment:
@@ -16,23 +35,13 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       WEBHOOK_URL: ${WEBHOOK_URL}
     depends_on:
-      - db
-
-  db:
-    image: postgres:15
-    container_name: medods_db
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-        - "${DB_PORT}:5432"
-    volumes:
-      - pg_data:/var/lib/postgresql/data
+      db:
+        condition: service_healthy
 
   swagger:
     image: swaggerapi/swagger-ui
     container_name: swagger_ui
+    restart: unless-stopped
     ports:
       - "8081:8080"
     environment:
